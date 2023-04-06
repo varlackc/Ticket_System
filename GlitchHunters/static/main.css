@@ -9,39 +9,59 @@ html {
     display:flex;
 }
 
-#main-page .left-menu {
-    width: 20vw;
-    height: 100vh;
-    background: orange;
-}
+    #main-page .left-menu {
+        width: 20vw;
+        height: 100vh;
+        background: #FFFDFF;
+        padding: 10px;
+        box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+        z-index:2;
+    }
 
     #main-page .content-area {
         width: 80vw;
         height: 100vh;
-        background-image: linear-gradient(to bottom, yellow 25%, green 25%, green 100%);
-    
+        background-image: linear-gradient(to bottom, #51DFDF 25%, #F4FCFC 25%, #F4FCFC 100%);
     }
-#main-page .content-area .content-box{
-    width:80%;
-    margin:20px auto 0;
-    background:blue;
-    min-height:200px;
-}
-/* Login CSS */
-.login #logo {
+        #main-page .content-area .content-box {
+            width: 80%;
+            margin: 20px auto 0;
+            background: #FFFDFF;
+            min-height: 200px;
+            padding:20px;
+            border-radius:10px;
+            box-shadow:0 0 5px 0 rgba(0, 0, 0, 0.1);
+        }
+
+    #main-page #logo h1 {
+        font-size: calc(6px + 1.5vw);
+        margin: 0;
+        color: #51DFDF;
+    }
+    #main-page #logo img {
+        width: calc(6px + 1.5vw);
+        height: calc(6px + 1.5vw);
+    }
+#logo {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
     gap: 5px;
 }
-.login #logo img {
+ #logo img {
     width: 40px;
     height: 40px;
 }
  * {
     font-family: 'Segoe UI';
 }
+#main-page .left-menu .menu {
+    display: flex;
+    flex-direction: column;
+}
+/* Login CSS */
+
 .login h1 {
     color: #51dfdf;
     font-weight: 500;

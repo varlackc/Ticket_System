@@ -16,13 +16,13 @@ app = Flask(__name__)
 @app.route("/login")
 def login():
     # return the template home.html inside the template folder
-    return render_template('login.html')
+    return render_template('login.html', title='Login')
 
 # App.route decorator sets the root of the website "Tickets"
 @app.route("/tickets")
 def tickets():
     # return the template home.html inside the template folder
-    return render_template('tickets.html')
+    return render_template('tickets.html', title='Tickets')
 
 # App.route decorator sets the root of the website "Ticket Details"
 @app.route("/ticket_detail")
@@ -35,7 +35,7 @@ def ticket_detail():
 @app.route("/projects")
 def projects():
     # return the template home.html inside the template folder
-    return render_template('projects.html')
+    return render_template('projects.html', title='Projects')
 
 # App.route decorator sets the root of the website "Ticket Details"
 @app.route("/project_detail")

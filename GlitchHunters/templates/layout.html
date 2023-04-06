@@ -9,20 +9,28 @@
 
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
         {% if title %}
-            <title>Flask Blog - {{ title }}</title>
+            <title>{{ title }}</title>
         {% else %}
-            <title>Flask Blog</title>
+            <title>GlitchHunters</title>
         {% endif %}
 
     </head>
     <body>
         <div id="main-page">
             <div class="left-menu">
-                Menu
+                <div id="logo">
+                    <img src="static/image.png" />
+                    <h1>GlitchHunters</h1>
+                </div>
+
+                <div class="menu">
+                    <a class="menu-item menu-link" href="/projects">Projects</a>
+                    <a class="menu-item menu-link" href="/tickets">Tickets</a>
+                </div>
+
             </div>
             <div class="content-area">
                 <div class="content-box">
-                    Page Content
                     {% block content %}{% endblock %}
                 </div>
             </div>
