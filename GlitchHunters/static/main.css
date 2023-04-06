@@ -1,72 +1,19 @@
 html {
                 
 }
-/* Main Layout CSS */
-#main-page{
-    width:100%;
-    height:100vh;
-    background:red;
-    display:flex;
-}
-
-    #main-page .left-menu {
-        width: 20vw;
-        height: 100vh;
-        background: #FFFDFF;
-        padding: 10px;
-        box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
-        z-index:2;
-    }
-
-    #main-page .content-area {
-        width: 80vw;
-        height: 100vh;
-        background-image: linear-gradient(to bottom, #51DFDF 25%, #F4FCFC 25%, #F4FCFC 100%);
-    }
-        #main-page .content-area .content-box {
-            width: 80%;
-            margin: 20px auto 0;
-            background: #FFFDFF;
-            min-height: 200px;
-            padding:20px;
-            border-radius:10px;
-            box-shadow:0 0 5px 0 rgba(0, 0, 0, 0.1);
-        }
-
-    #main-page #logo h1 {
-        font-size: calc(6px + 1.5vw);
-        margin: 0;
-        color: #51DFDF;
-    }
-    #main-page #logo img {
-        width: calc(6px + 1.5vw);
-        height: calc(6px + 1.5vw);
-    }
 #logo {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: center;
-    gap: 5px;
 }
- #logo img {
-    width: 40px;
-    height: 40px;
-}
- * {
+* {
     font-family: 'Segoe UI';
 }
-#main-page .left-menu .menu {
-    display: flex;
-    flex-direction: column;
+h1 {
+    color:#51dfdf;
+    font-weight:500;
 }
-/* Login CSS */
-
-.login h1 {
-    color: #51dfdf;
-    font-weight: 500;
-}
-.login .content {
+.content {
     margin: auto;
     max-width: 300px;
     height: 100%;
@@ -74,11 +21,11 @@ html {
     flex-direction: column;
     justify-content: center;
 }
-.login #login {
+#login {
     display: flex;
     flex-direction: column;
 }
-.login #login input {
+#login input {
     margin: 5px;
     padding: 5px 10px;
     border-radius: 10px;
@@ -87,15 +34,15 @@ html {
     font-size: 16px;
     font-weight: 600;
 }
-.login #login input.field {
+#login input.field {
     background: #f4f4fc;
     line-height: 30px;
     color: #333;
 }
-.login #login input.field::placeholder {
+#login input.field::placeholder {
     color: #b5b5bb;
 }
-.login #login input[type="submit"] {
+#login input[type="submit"] {
     background: #ffa800;
     color: white;
     font-size: 14px;
@@ -104,6 +51,6 @@ html {
     cursor: pointer;
     transition: 0.2s ease;
 }
-.login #login input[type="submit"]:hover {
+#login input[type="submit"]:hover {
     background: #e19400;
 }
