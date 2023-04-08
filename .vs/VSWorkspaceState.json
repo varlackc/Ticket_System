@@ -1,7 +1,11 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\GlitchHunters",
+    "\\GlitchHunters\\images",
+    "\\GlitchHunters\\static",
+    "\\GlitchHunters\\templates"
   ],
-  "SelectedNode": "\\C:\\Users\\benny\\GitHub\\Ticket_System",
+  "SelectedNode": "\\GlitchHunters\\templates\\tickets.html",
   "PreviewInSolutionExplorer": false
 }
