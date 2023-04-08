@@ -1,10 +1,38 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="heading-area">
-    <h1>Tickets</h1>
+    <h4>Tickets</h4>
+    <button onclick="createTicket()">Create Ticket</button>
 </div>
 <div class="tickets">
+    <div class="heading-row row">
+        <div class="col id">
+            ID
+        </div>
+        <div class="col title">
+            Title
+        </div>
+        <div class="col project">
+            Project
+        </div>
+        <div class="col date">
+            Date
+        </div>
+        <div class="col status">
+            Status
+        </div>
+        <div class="col assignee">
+            Assignee
+        </div>
+        <div class="col edit">
+            
+        </div>
+    </div>
     <!-- PULL INFO FROM DB AND PUT HERE -->
+        <!-- LOOP -->
+            <div class="content-row row"></div>
+        <!-- 
+    End of DB pull -->
 </div>
         
 {% endblock content %}

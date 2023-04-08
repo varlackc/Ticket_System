@@ -1,6 +1,15 @@
 html {
                 
 }
+:root {
+    --teal: #51DFDF;
+    --orange: #FFA800;
+    --lightteal: #F4FCFC;
+    --lightgray: #D9D9D9;
+    --text: #3A3A3A;
+    --white: #fffdff;
+    --halfwhite: #ffffffdd;
+}
 /* Main Layout CSS */
 #main-page{
     width:100%;
@@ -8,30 +17,81 @@ html {
     background:red;
     display:flex;
 }
+    #main-page .row {
+        margin: 0;
+        display: grid;
+        margin: 0 -20px;
+        padding: 5px 20px;
+    }
+    #main-page .tickets .row {
+        grid-template-columns: 0.5fr 1fr 1fr 1fr 1fr 1fr 0.25fr;
+    }
+    #main-page .projects .row {
+        grid-template-columns: 0.5fr 1fr 1fr 0.25fr;
+    }
+    #main-page .heading-row {
+        background: var(--lightteal);
+        color: var(--teal);
+        font-size: 14px;
+        font-weight: 500;
+        margin-top:15px;
+    }
+h4 {
+    margin: 0;
+    text-transform:uppercase;
+}
+#main-page .heading-area {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+    #main-page button.middle {
+       align-self:center;
+    }
+#main-page button {
+    margin: 5px;
+    padding: 5px 10px;
+    border-radius: 10px;
+    border-width: 0;
+    outline: 0;
+    font-size: 16px;
+    font-weight: 600;
+    background: var(--orange);
+    color: var(--halfwhite);
+    font-size: 14px;
+    width: fit-content;
+    padding: 4px 40px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
 
-    #main-page .left-menu {
-        width: 20vw;
-        height: 100vh;
-        background: #FFFDFF;
-        padding: 10px;
+#main-page button:hover {
+    background: #e19400;
+}
+
+#main-page .left-menu {
+    width: 20vw;
+    height: 100vh;
+    background: var(--white);
+    padding: 10px;
+    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+    z-index: 2;
+}
+
+#main-page .content-area {
+    width: 80vw;
+    height: 100vh;
+    background-image: linear-gradient(to bottom, var(--teal) 25%, var(--white) 25%, var(--white) 100%);
+}
+    #main-page .content-area .content-box {
+        width: 80%;
+        margin: 20px auto 0;
+        background: var(--white);
+        min-height: 200px;
+        padding: 20px;
+        border-radius: 10px;
         box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
-        z-index:2;
     }
-
-    #main-page .content-area {
-        width: 80vw;
-        height: 100vh;
-        background-image: linear-gradient(to bottom, #51DFDF 25%, #F4FCFC 25%, #F4FCFC 100%);
-    }
-        #main-page .content-area .content-box {
-            width: 80%;
-            margin: 20px auto 0;
-            background: #FFFDFF;
-            min-height: 200px;
-            padding:20px;
-            border-radius:10px;
-            box-shadow:0 0 5px 0 rgba(0, 0, 0, 0.1);
-        }
 
     #main-page #logo h1 {
         font-size: calc(6px + 1.5vw);
@@ -78,7 +138,7 @@ html {
 /* Login CSS */
 
 .login h1 {
-    color: #51dfdf;
+    color: var(--teal);
     font-weight: 500;
 }
 .login .content {
@@ -93,7 +153,7 @@ html {
     display: flex;
     flex-direction: column;
 }
-input {
+#login input {
     margin: 5px;
     padding: 5px 10px;
     border-radius: 10px;
@@ -105,13 +165,13 @@ input {
 .login #login input.field {
     background: #f4f4fc;
     line-height: 30px;
-    color: #333;
+    color: var(--text);
 }
 .login #login input.field::placeholder {
     color: #b5b5bb;
 }
-input[type="submit"] {
-    background: #ffa800;
+#login input[type="submit"] {
+    background: var(--orange);
     color: white;
     font-size: 14px;
     width: fit-content;
@@ -119,6 +179,6 @@ input[type="submit"] {
     cursor: pointer;
     transition: 0.2s ease;
 }
-input[type="submit"]:hover {
+#login input[type="submit"]:hover {
     background: #e19400;
 }
