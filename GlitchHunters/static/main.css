@@ -56,9 +56,24 @@ html {
  * {
     font-family: 'Segoe UI';
 }
+ hr{
+     width:100%;
+ }
 #main-page .left-menu .menu {
     display: flex;
     flex-direction: column;
+    padding:10px;
+}
+#main-page .left-menu .menu .menu-item{
+    margin: 10px 0;
+    color:black;
+    font-size:20px;
+}
+    #main-page .left-menu .menu .menu-item img{
+        margin-right:5px;
+    }
+#main-page .menu input {
+    align-self: center;
 }
 /* Login CSS */
 
@@ -78,7 +93,7 @@ html {
     display: flex;
     flex-direction: column;
 }
-.login #login input {
+input {
     margin: 5px;
     padding: 5px 10px;
     border-radius: 10px;
@@ -95,7 +110,7 @@ html {
 .login #login input.field::placeholder {
     color: #b5b5bb;
 }
-.login #login input[type="submit"] {
+input[type="submit"] {
     background: #ffa800;
     color: white;
     font-size: 14px;
@@ -104,6 +119,6 @@ html {
     cursor: pointer;
     transition: 0.2s ease;
 }
-.login #login input[type="submit"]:hover {
+input[type="submit"]:hover {
     background: #e19400;
 }
