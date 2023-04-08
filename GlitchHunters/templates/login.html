@@ -12,9 +12,23 @@
                 <h1>GlitchHunters</h1>
             </div>
             <form id="login" name="login" action="" method="post">
-                <input class="field username" name="username" placeholder="Username" type="text" />
-                <input class="field password" name="password" placeholder="Password" type="password" />
-                <input class="submit" name="submit" type="submit" value="Login" />
+                {{ form.hidden_tag() }}
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{category}}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    
+                    {{ form.username(class="field username", placeholder="Username") }}
+ 
+                    {{ form.password(class="field password", placeholder="Password") }}
+            
+                    {{ form.submit(class="") }}
+            
             </form>
         </div>
     </div>
