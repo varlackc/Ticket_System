@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="heading-area">
+    <h4>Projects</h4>
+    <button onclick="createProject()">Create Project</button>
+</div>
+<div class="projects">
+    <div class="heading-row row">
+        <div class="col id">
+            ID
+        </div>
+        <div class="col title">
+            Title
+        </div>
+        <div class="col date">
+            Date
+        </div>
+        <div class="col edit">
+
+        </div>
+    </div>
+    <!-- PULL INFO FROM DB AND PUT HERE -->
+    <!-- LOOP -->
+    <div class="content-row row"></div>
+    <!--
+    End of DB pull -->
+</div>
+
+{% endblock content %}
