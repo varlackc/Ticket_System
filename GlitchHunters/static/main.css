@@ -107,14 +107,8 @@ h4 {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: center;
-    gap: 5px;
 }
- #logo img {
-    width: 40px;
-    height: 40px;
-}
- * {
+* {
     font-family: 'Segoe UI';
 }
  hr{
@@ -148,7 +142,7 @@ h4 {
     color: var(--teal);
     font-weight: 500;
 }
-.login .content {
+.content {
     margin: auto;
     max-width: 300px;
     height: 100%;
@@ -156,7 +150,7 @@ h4 {
     flex-direction: column;
     justify-content: center;
 }
-.login #login {
+#login {
     display: flex;
     flex-direction: column;
 }
@@ -169,12 +163,12 @@ h4 {
     font-size: 16px;
     font-weight: 600;
 }
-.login #login input.field {
+#login input.field {
     background: #f4f4fc;
     line-height: 30px;
     color: var(--text);
 }
-.login #login input.field::placeholder {
+#login input.field::placeholder {
     color: #b5b5bb;
 }
 #login input[type="submit"] {

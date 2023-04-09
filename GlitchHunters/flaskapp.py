@@ -30,6 +30,13 @@ def loggedIn():
     if session["login"] != 1:
         return 0
     return 1
+=======
+# App.route decorator sets the root of the website "Home Page"
+@app.route("/")
+@app.route("/login")
+def login():
+    # return the template home.html inside the template folder
+    return render_template('login.html')
 
 # App.route decorator sets the root of the website "Tickets"
 @app.route("/tickets")
@@ -40,7 +47,7 @@ def tickets():
         return redirect("/login")
     
     # return the template home.html inside the template folder
-    return render_template('tickets.html', title='Tickets')
+    return render_template('tickets.html')
 
 # App.route decorator sets the root of the website "Ticket Details"
 @app.route("/ticket_detail")
@@ -84,7 +91,7 @@ def projects():
         return redirect("/login")
         
     # return the template home.html inside the template folder
-    return render_template('projects.html', title='Projects')
+    return render_template('projects.html')
 
 # App.route decorator sets the root of the website "Ticket Details"
 @app.route("/project_detail")
