@@ -44,9 +44,6 @@ html {
 .detail .detail-header .right{
     display: flex;;
 }
-.detail .description{
-    display: flex;;
-}
 .detail .status{
     margin:0;
     margin-left:5px;
@@ -73,7 +70,7 @@ html {
         box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.1);
     }
     #main-page .tickets .row {
-        grid-template-columns: 35% 15% 20% 15% 15%;
+        grid-template-columns: 35% 20% 20% 10% 15%;
     }
     #main-page .clickable-row:hover {
         background: var(--teal);
@@ -81,6 +78,9 @@ html {
         cursor: pointer;
     }
     #main-page .projects .row {
+        grid-template-columns: 25% 25% 25% 25%;
+    }
+    #main-page .customers .row {
         grid-template-columns: 25% 25% 25% 25%;
     }
     #main-page .heading-row {
@@ -218,7 +218,7 @@ h4 {
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
-.add input, .add select {
+.add input, .add select, .add textarea  {
     margin: 5px;
     padding: 5px 10px;
     border-radius: 10px;
@@ -227,7 +227,7 @@ h4 {
     font-size: 16px;
     font-weight: 600;
 }
-.add input, .add select {
+.add input, .add select, .add textarea {
     background: #f4f4fc;
     line-height: 30px;
     color: var(--text);

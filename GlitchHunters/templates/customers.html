@@ -4,26 +4,42 @@
     <h4>Customers</h4>
     <button onclick="createCustomer()">Create Customer</button>
 </div>
-<div class="projects">
+<div class="customers">
     <div class="heading-row row">
-        <div class="col id">
-            ID
-        </div>
-        <div class="col title">
+        <div class="col fname">
             First Name
         </div>
-        <div class="col date">
+        <div class="col lname">
             Last Name
         </div>
-        <div class="col edit">
-
+        <div class="col phone">
+            Phone
+        </div>
+        <div class="col email">
+            Email
         </div>
     </div>
     <!-- PULL INFO FROM DB AND PUT HERE -->
-    <!-- LOOP -->
-    <div class="content-row row"></div>
-    <!--
-    End of DB pull -->
+    {% for item in data %}
+        <div class="content-row clickable-row row" data-link="customer_detail?id={{item.customerID}}">
+            <div class="col title">
+                {{item.customerName}}
+            </div>
+            <div class="col project">
+                {{item.customerLastName}}
+            </div>
+            <div class="col assignee">
+                {{item.customerPhoneNumber}}
+            </div>
+            <div class="col priority">
+                {{item.customerEmail}}
+            </div>
+        </div>
+    {% endfor %}
 </div>
-
+<script>
+    function createCustomer(){
+        window.location.replace("add_customer");
+    }
+</script>
 {% endblock content %}

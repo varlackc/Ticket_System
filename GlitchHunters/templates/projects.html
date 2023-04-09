@@ -26,10 +26,10 @@
                 {{item.projectName}}
             </div>
             <div class="col customer">
-                {{item.customerID}}
+                {{customers[item.projectID]}}
             </div>
             <div class="col manager">
-                {{item.projectManager}}
+                {{employees[item.projectID]}}
             </div>
             <div class="col status">
                 {{item.projectStatus}}

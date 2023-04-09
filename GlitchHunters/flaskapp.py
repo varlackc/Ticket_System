@@ -6,7 +6,7 @@
 from flask import Flask, render_template, url_for, flash, redirect, session, request
 
 # Form Helper :)
-from forms import RegistrationForm, LoginForm, AddProject, AddTicket
+#from forms import RegistrationForm, LoginForm, AddProject, AddTicket, AddCustomer
 
 # Flask Session
 from flask_session import Session
@@ -18,13 +18,18 @@ from sqlalchemy.orm import sessionmaker
 import os
 
 # models.py
-from models import Login, Ticket, Project, Employee
+from models import Login, Ticket, Project, Employee, Customer
 
 #Flask_SQLAlchemy
 from flask_sqlalchemy import SQLAlchemy
 
 import json
 
+#Form Stuff
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, TextAreaField
+from wtforms.validators import DataRequired, Length, Email, EqualTo
+from wtforms.ext.sqlalchemy.fields import QuerySelectField
 
 ##########################################################
 #  CONFIGURATION         
@@ -81,6 +86,104 @@ def loggedIn():
         return 0
     return 1
 
+##################################################################################################################
+# FORMS
+##################################################################################################################
+    
+#
+#  LOGIN FORM     
+#
+class LoginForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()], )
+    password = PasswordField('Password', validators=[DataRequired()])
+    submit = SubmitField('Login')
+    
+#
+#  REGISTRATION FORM         
+#
+class RegistrationForm(FlaskForm):
+    username = StringField('Username',
+                           validators=[DataRequired(), Length(min=2, max=20)])
+    firstname = StringField('FirstName',
+                        validators=[DataRequired(), Length(min=2, max=20)])
+    lastname = StringField('LastName',
+                        validators=[DataRequired(), Length(min=2, max=20)])
+    password = PasswordField('Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password',
+                                     validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Sign Up')
+   
+#
+#  TICKET FORM         
+# 
+class AddTicket(FlaskForm):
+    ticketName = StringField('Title', validators=[DataRequired()], )
+    ticketDescription = TextAreaField('Description', validators=[DataRequired()])
+    
+    rows = connect.query(Project).order_by(Project.projectID.asc())
+    projectIDs = []
+    projectNames = []
+    for r in rows:
+        projectIDs.append(r.projectID)
+        projectNames.append(r.projectName)
+    projects = list(zip(projectIDs, projectNames))
+    
+    rows = connect.query(Employee).order_by(Employee.employeeID.asc())
+    employeeIDs = []
+    employeeNames = []
+    for r in rows:
+        employeeIDs.append(r.employeeID)
+        employeeNames.append(r.employeeName + " " + r.employeeLastName)
+    employees = list(zip(employeeIDs, employeeNames))
+    
+    projectID = SelectField('Project', choices=projects, coerce=int)
+    employeeID = SelectField('Employee', choices=employees, coerce=int)
+    
+    priority = SelectField('Priority', choices=[('Low', 'Low'), ('Medium', 'Medium'), ('High', 'High')])
+    status = SelectField('Status', choices=[('Open', 'Open'), ('In Progress', 'In Progress'), ('Closed', 'Closed')], validators=[DataRequired()])
+    submit = SubmitField('Add')
+
+#
+#  PROJECT FORM         
+#
+class AddProject(FlaskForm):
+    projectName = StringField('Title', validators=[DataRequired()], )
+    projectDescription = TextAreaField('Description', validators=[DataRequired()])
+    
+    rows = connect.query(Customer).order_by(Customer.customerID.asc())
+    customerIDs = [0]
+    customerNames = [""]
+    for r in rows:
+        customerIDs.append(r.customerID)
+        customerNames.append(r.customerName)
+    customers = list(zip(customerIDs, customerNames))
+    
+    rows = connect.query(Employee).order_by(Employee.employeeID.asc())
+    employeeIDs = [0]
+    employeeNames = [""]
+    for r in rows:
+        employeeIDs.append(r.employeeID)
+        employeeNames.append(r.employeeName + " " + r.employeeLastName)
+    employees = list(zip(employeeIDs, employeeNames))
+    
+    # NEED TO PULL SELECT OPTIONS FROM DB FOR THESE TWO FIELDS
+    customerID = SelectField(u'Customer', choices=customers, coerce=int, validators=[DataRequired()])
+    projectManager = SelectField(u'Employee', choices=employees, coerce=int, validators=[DataRequired()])
+    
+    submit = SubmitField('Add')
+    
+#
+#  CUSTOMERS FORM         
+#
+class AddCustomer(FlaskForm):
+    customerName = StringField('FIrst Name', validators=[DataRequired()], )
+    customerLastName = StringField('Last Name', validators=[DataRequired()])
+    customerPhoneNumber = StringField('Phone Number', validators=[DataRequired()])
+    customerAddress = StringField('Street Address', validators=[DataRequired()])
+    customerEmail = StringField('Email', validators=[DataRequired()])   
+    customerNotes = TextAreaField('Notes', validators=[DataRequired()])    
+    submit = SubmitField('Add') 
+    
 ##########################################################
 #  TICKETS         
 ##########################################################
@@ -95,10 +198,25 @@ def tickets():
     if not loggedIn():
         return redirect("/login")
     
+    #rows = connect.query(Ticket).order_by(Ticket.ticketID.asc())
+    projects = {"dict": "create"}
+    employees = {"dict": "create"}
     rows = connect.query(Ticket).order_by(Ticket.ticketID.asc())
+    for r in rows:
+        project = connect.query(Project).where(Project.projectID==r.projectID).order_by(Project.projectID.asc()).first()
+        if(project):
+            projects[r.ticketID] = project.projectName
+        else:
+            projects[r.ticketID] = ""
+        
+        employee = connect.query(Employee).where(Employee.employeeID==r.employeeID).order_by(Employee.employeeID.asc()).first()
+        if(employee):
+            employees[r.ticketID] = employee.employeeName
+        else:
+            employees[r.ticketID] = ""
     
     # Load the tickets.html Template
-    return render_template('tickets.html', title='Tickets', data=rows)
+    return render_template('tickets.html', title='Tickets', data=rows, projects=projects, employees=employees)
 
 #
 # Ticket Details Page
@@ -133,6 +251,8 @@ def add_ticket():
         return redirect("/login")
     
     form = AddTicket()
+    
+    #projects = connect.query(Project).order_by(Project.projectID.desc()).first()
     
     if(request.method == "POST"):
         if form.validate_on_submit():
@@ -171,10 +291,25 @@ def projects():
     if not loggedIn():
         return redirect("/login")
     
+    customers = {"dict": "create"}
+    employees = {"dict": "create"}
     rows = connect.query(Project).order_by(Project.projectID.asc())
+    for r in rows:
         
+        customer = connect.query(Customer).where(Customer.customerID==r.customerID).order_by(Customer.customerID.asc()).first()
+        if(customer):
+            customers[r.projectID] = customer.customerName
+        else:
+            customers[r.projectID] = ""
+        
+        employee = connect.query(Employee).where(Employee.employeeID==r.projectManager).order_by(Employee.employeeID.asc()).first()
+        if(employee):
+            employees[r.projectID] = employee.employeeName
+        else:
+            employees[r.projectID] = ""
+            
     # Load the projects.html Template
-    return render_template('projects.html', title='Projects', data=rows)
+    return render_template('projects.html', title='Projects', data=rows, customers=customers, employees=employees)
 
 #
 # Project Details
@@ -189,14 +324,20 @@ def project_detail():
     id = request.args.get('id')
     
     project = connect.query(Project).where(Project.projectID==id).order_by(Project.projectID.asc()).first()
-    #tpid = ticket.projectID
-    #project = connect.query(Project).where(Project.projectID==tpid).order_by(Project.projectID.asc()).first()
-    #projectName = project.projectName
-    #employee = connect.query(Employee).where(Employee.employeeID==ticket.employeeID).order_by(Employee.employeeID.asc()).first()
-    #employeeName = employee.employeeName
-    
+    cid = project.customerID
+    customer = connect.query(Customer).where(Customer.customerID==cid).order_by(Customer.customerID.asc()).first()
+    if(customer):
+        customerName = customer.customerName
+    else:
+        customerName = ""
+    employee = connect.query(Employee).where(Employee.employeeID==project.projectManager).order_by(Employee.employeeID.asc()).first()
+    if(employee):
+        employeeName = employee.employeeName
+    else:
+        employeeName = ""
+        
     # Load the project_detail.html Template
-    return render_template('project_detail.html', p=project)
+    return render_template('project_detail.html', p=project, customerName=customerName, employeeName=employeeName)
 
 #
 # Add Project
@@ -218,7 +359,7 @@ def add_project():
             
             # New Project Object
             # (projectID, projectName, projectNumber, projectDescription, projectManager, customerID, projectClient, projectStatus)
-            newProject = Project(int(newID), form.projectName.data, 0, form.projectDescription.data, form.projectManager.data, form.customerID.data, "", form.projectStatus.data)
+            newProject = Project(int(newID), form.projectName.data, 0, form.projectDescription.data, form.projectManager.data, form.customerID.data, "", "")
             
             # Insert Ticket Into Database
             connect.add(newProject)
@@ -231,6 +372,77 @@ def add_project():
                     flash(err, 'danger')
 
     return render_template('add_project.html', title="Add Project", form=form)
+
+##########################################################
+#  CUSTOMERS         
+##########################################################
+
+#
+# Customers Page
+#
+@app.route("/customers")
+def customers():
+    
+    # Check if logged in
+    if not loggedIn():
+        return redirect("/login")
+    
+    rows = connect.query(Customer).order_by(Customer.customerID.asc())
+        
+    # Load the customers.html Template
+    return render_template('customers.html', title='Customers', data=rows)
+
+#
+# Customer Details
+#
+@app.route("/customer_detail")
+def customer_detail():
+    
+    # Check if logged in
+    if not loggedIn():
+        return redirect("/login")
+    
+    id = request.args.get('id')
+    
+    customer = connect.query(Customer).where(Customer.customerID==id).order_by(Customer.customerID.asc()).first()
+    
+    # Load the project_detail.html Template
+    return render_template('customer_detail.html', c=customer)
+
+#
+# Add Customer
+#
+@app.route("/add_customer", methods=['GET', 'POST'])
+def add_customer():
+    
+    # Check if logged in
+    if not loggedIn():
+        return redirect("/login")
+    
+    form = AddCustomer()
+    
+    if(request.method == "POST"):
+        if form.validate_on_submit():
+            # Get new Ticket ID
+            targetRow = connect.query(Customer).order_by(Customer.customerID.desc()).first()
+            newID = targetRow.customerID + 1
+            
+            # New Project Object
+            # (projectID, projectName, projectNumber, projectDescription, projectManager, customerID, projectClient, projectStatus)
+            newCustomer = Customer(int(newID), form.customerName.data, form.customerLastName.data, form.customerPhoneNumber.data, form.customerAddress.data, form.customerEmail.data, "", "", form.customerNotes.data)
+            
+            # Insert Ticket Into Database
+            connect.add(newCustomer)
+            connect.commit()
+            
+            return redirect("/customers")
+        else:
+            for fieldName, errorMessages in form.errors.items():
+                for err in errorMessages:
+                    flash(err, 'danger')
+
+    return render_template('add_customer.html', title="Add Customer", form=form)
+
 ##########################################################
 #  REGISTRATION         
 ##########################################################
@@ -301,3 +513,4 @@ def logout():
 # setup so that we don't have to manually set environmental variables
 if __name__ == '__main__':
     app.run(debug=True)
+  

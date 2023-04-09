@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block content %}
+        <div class="project_detail detail">
+                <div class="detail-header">
+                        <div class="top">
+                                <div class="left">
+                                        <h4>{{c.customerName}} {{c.customerLastName}}</h4>
+                                        <!--<p class="status">({{c.customerPhoneNumber}})</p>-->
+                                </div>
+                                <div class="right">
+                                        <h4>{{c.customerEmail}}</h4>
+                                </div>
+                        </div>
+                        <div class="bottom">
+                                <h4>Phone: {{c.customerPhoneNumber}}</h4>
+                        </div>
+                </div>
+                <hr>
+                <div class="description customerAddress">
+                        Address: {{c.customerAddress}}
+                </div>
+                <hr>
+                <div class="description customer-notes">
+                        <b>Notes</b><br>
+                        <p>{{c.customerNotes}}</p>
+                </div>
+        </div>
+        
+
+{% endblock content %}
