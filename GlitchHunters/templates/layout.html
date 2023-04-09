@@ -57,7 +57,10 @@
             function logout(){
                 window.location.replace("logout");
             }
-
+            $(".clickable-row").click(function(){
+                //console.log($(this).attr("data-link"));
+                window.location=$(this).attr("data-link");
+              });
         </script>
     </body>
 </html>

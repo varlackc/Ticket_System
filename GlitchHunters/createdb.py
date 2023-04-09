@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 import os
 
 # verify if the database already exists
-database_filename = "appdb.db"
+database_filename = "GlitchHunters/appdb.db"
 
 if os.path.exists(database_filename):
     print(f"The database file {database_filename} already exists")
@@ -17,9 +17,9 @@ else:
     class Login(dataBase):
         __tablename__ = "login"
         
-        loginID = Column("loginID", Integer, primary_key=True)
-        userName = Column("userName", String)
-        password = Column("password", String)
+        loginID = Column("loginID", Integer, index=True, unique=True, primary_key=True, autoincrement=True)
+        userName = Column("userName", String, nullable=False)
+        password = Column("password", String, nullable=False)
         firstName = Column("firstName", String)
         lastName = Column("lastName", String)
         loginType = Column("loginType", String)
@@ -147,6 +147,8 @@ else:
     # Sample user login credentials
     login = Login(1, "demo", "demo", "John", "Walker", "Demo")
     session.add(login)
+    login = Login(2, "demo", "demo", "John", "Walker", "Demo")
+    session.add(login)
     
     # Sample ticket data
     ticket = Ticket(1, "demoTicket", "Ticket Description: Demo ticket for testing", 1, 1, "low", "demo")
@@ -158,6 +160,9 @@ else:
     
     customer = Customer(1, "demoCustomerName", "demoCustomerLastName", "1-555-555-5555", "customerAddress: 555 somewere street USA", "demo@email.com", "demoCustomer", "demo", "This customer is a demo used to test the database")
     session.add(customer)
+    
+    employee = Employee(1, "employeeName", "employeeLastName", "employeeTitle", "employeeType", "employeeNotes", "employeeStatus", 1)
+    session.add(employee)
 
     # commit changes
     session.commit()

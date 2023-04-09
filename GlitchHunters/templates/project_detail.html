@@ -1,12 +1,25 @@
 {% extends "layout.html" %}
 {% block content %}
-        <a href="projects">Back</a>
-        <h4>Project ID: {{ id }}</h4>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla ullamcorper urna sit 
-        amet nunc semper lacinia. Nunc eget imperdiet orci. Donec a egestas enim. Mauris ut vestibulum 
-        odio, nec rhoncus augue. In lacinia efficitur nunc eget suscipit. In dapibus lobortis vulputate. 
-        Curabitur vitae orci mauris. Sed id vehicula sem. Donec sollicitudin justo maximus, cursus nunc 
-        aliquam, commodo libero. Sed in urna ipsum. Nulla laoreet purus nec ultrices lacinia. Nunc et 
-        purus mattis, lobortis orci a, hendrerit dui. Curabitur vitae augue mattis, lacinia sapien vel, 
-        aliquam orci. Nullam sit amet gravida ligula.</p>
+        <div class="project_detail detail">
+                <div class="detail-header">
+                        <div class="top">
+                                <div class="left">
+                                        <h4>{{p.projectName}}</h4>
+                                        <p class="status">({{p.projectStatus}})</p>
+                                </div>
+                                <div class="right">
+                                        <h4>{{p.customerID}}</h4>
+                                </div>
+                        </div>
+                        <div class="bottom">
+                                <h4>{{p.projectManager}}</h4>
+                        </div>
+                </div>
+                <hr>
+                <div class="description project-description">
+                        <p>{{p.projectDescription}}</p>
+                </div>
+        </div>
+        
+
 {% endblock content %}
