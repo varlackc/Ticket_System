@@ -17,9 +17,9 @@ else:
     class Login(dataBase):
         __tablename__ = "login"
         
-        loginID = Column("loginID", Integer, primary_key=True)
-        userName = Column("userName", String)
-        password = Column("password", String)
+        loginID = Column("loginID", Integer, index=True, unique=True, primary_key=True, autoincrement=True)
+        userName = Column("userName", String, nullable=False)
+        password = Column("password", String, nullable=False)
         firstName = Column("firstName", String)
         lastName = Column("lastName", String)
         loginType = Column("loginType", String)
