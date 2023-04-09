@@ -78,7 +78,7 @@ html {
         cursor: pointer;
     }
     #main-page .projects .row {
-        grid-template-columns: 25% 25% 25% 25%;
+        grid-template-columns: 33% 33% 33%;
     }
     #main-page .customers .row {
         grid-template-columns: 25% 25% 25% 25%;
@@ -89,6 +89,16 @@ html {
         font-size: 14px;
         font-weight: 500;
         margin-top:15px;
+    }
+    #main-page .bottom-buttons{
+        display:flex;
+        justify-content: space-between;
+    }
+    #main-page .bottom-buttons .delete{
+        background:#cb0000;
+    }
+    #main-page .bottom-buttons .delete:hover{
+        background:#a80000;
     }
 h4 {
     margin: 0;

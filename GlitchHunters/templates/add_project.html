@@ -1,8 +1,8 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h4>Add New Project</h4>
+    <h4>{{title}}</h4>
         <br>
-    <form id="addProject" class="add" name="add" action="" method="post">
+    <form id="addProject" class="add" name="{{title}}" action="{{ type }}?id={{ id }}&edit={{edit}}" method="post">
         {{ form.hidden_tag() }}
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
@@ -26,7 +26,6 @@
 
             {{ form.customerID.label(class="label") }}
             {{ form.customerID(class="field customerID") }}
-
             </div>
             {{ form.submit(class="") }}
     

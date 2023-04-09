@@ -15,9 +15,6 @@
         <div class="col manager">
             Manager
         </div>
-        <div class="col status">
-            Status
-        </div>
     </div>
     <!-- PULL INFO FROM DB AND PUT HERE -->
     {% for item in data %}
@@ -30,9 +27,6 @@
             </div>
             <div class="col manager">
                 {{employees[item.projectID]}}
-            </div>
-            <div class="col status">
-                {{item.projectStatus}}
             </div>
         </div>
     {% endfor %}

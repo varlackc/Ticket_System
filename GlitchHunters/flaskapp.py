@@ -27,7 +27,7 @@ import json
 
 #Form Stuff
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, TextAreaField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, TextAreaField, HiddenField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 
@@ -121,27 +121,29 @@ class AddTicket(FlaskForm):
     ticketDescription = TextAreaField('Description', validators=[DataRequired()])
     
     rows = connect.query(Project).order_by(Project.projectID.asc())
-    projectIDs = []
-    projectNames = []
-    for r in rows:
-        projectIDs.append(r.projectID)
-        projectNames.append(r.projectName)
+    projectIDs = [0]
+    projectNames = [""]
+    if(rows):
+        for r in rows:
+            projectIDs.append(r.projectID)
+            projectNames.append(r.projectName)
     projects = list(zip(projectIDs, projectNames))
     
     rows = connect.query(Employee).order_by(Employee.employeeID.asc())
-    employeeIDs = []
-    employeeNames = []
-    for r in rows:
-        employeeIDs.append(r.employeeID)
-        employeeNames.append(r.employeeName + " " + r.employeeLastName)
+    employeeIDs = [0]
+    employeeNames = [""]
+    if(rows):
+        for r in rows:
+            employeeIDs.append(r.employeeID)
+            employeeNames.append(r.employeeName + " " + r.employeeLastName)
     employees = list(zip(employeeIDs, employeeNames))
     
     projectID = SelectField('Project', choices=projects, coerce=int)
     employeeID = SelectField('Employee', choices=employees, coerce=int)
     
-    priority = SelectField('Priority', choices=[('Low', 'Low'), ('Medium', 'Medium'), ('High', 'High')])
+    priority = SelectField('Priority', choices=[('Low', 'Low'), ('Medium', 'Medium'), ('High', 'High')], validators=[DataRequired()])
     status = SelectField('Status', choices=[('Open', 'Open'), ('In Progress', 'In Progress'), ('Closed', 'Closed')], validators=[DataRequired()])
-    submit = SubmitField('Add')
+    submit = SubmitField('Submit')
 
 #
 #  PROJECT FORM         
@@ -153,24 +155,25 @@ class AddProject(FlaskForm):
     rows = connect.query(Customer).order_by(Customer.customerID.asc())
     customerIDs = [0]
     customerNames = [""]
-    for r in rows:
-        customerIDs.append(r.customerID)
-        customerNames.append(r.customerName)
+    if(rows):
+        for r in rows:
+            customerIDs.append(r.customerID)
+            customerNames.append(r.customerName)
     customers = list(zip(customerIDs, customerNames))
     
     rows = connect.query(Employee).order_by(Employee.employeeID.asc())
     employeeIDs = [0]
     employeeNames = [""]
-    for r in rows:
-        employeeIDs.append(r.employeeID)
-        employeeNames.append(r.employeeName + " " + r.employeeLastName)
+    if(rows):
+        for r in rows:
+            employeeIDs.append(r.employeeID)
+            employeeNames.append(r.employeeName + " " + r.employeeLastName)
     employees = list(zip(employeeIDs, employeeNames))
     
-    # NEED TO PULL SELECT OPTIONS FROM DB FOR THESE TWO FIELDS
-    customerID = SelectField(u'Customer', choices=customers, coerce=int, validators=[DataRequired()])
-    projectManager = SelectField(u'Employee', choices=employees, coerce=int, validators=[DataRequired()])
-    
-    submit = SubmitField('Add')
+    customerID = SelectField(u'Customer', choices=customers, coerce=int)
+    projectManager = SelectField(u'Employee', choices=employees, coerce=int)
+        
+    submit = SubmitField('Submit')
     
 #
 #  CUSTOMERS FORM         
@@ -182,7 +185,7 @@ class AddCustomer(FlaskForm):
     customerAddress = StringField('Street Address', validators=[DataRequired()])
     customerEmail = StringField('Email', validators=[DataRequired()])   
     customerNotes = TextAreaField('Notes', validators=[DataRequired()])    
-    submit = SubmitField('Add') 
+    submit = SubmitField('Submit') 
     
 ##########################################################
 #  TICKETS         
@@ -233,9 +236,15 @@ def ticket_detail():
     ticket = connect.query(Ticket).where(Ticket.ticketID==id).order_by(Ticket.ticketID.asc()).first()
     tpid = ticket.projectID
     project = connect.query(Project).where(Project.projectID==tpid).order_by(Project.projectID.asc()).first()
-    projectName = project.projectName
+    if(project):
+        projectName = project.projectName
+    else:
+        projectName = ""
     employee = connect.query(Employee).where(Employee.employeeID==ticket.employeeID).order_by(Employee.employeeID.asc()).first()
-    employeeName = employee.employeeName
+    if(project):
+        employeeName = employee.employeeName
+    else:
+        employeeName = ""
 
     # Load the ticket_detail.html Template
     return render_template('ticket_detail.html', t=ticket, projectName=projectName, employeeName=employeeName )
@@ -348,14 +357,37 @@ def add_project():
     # Check if logged in
     if not loggedIn():
         return redirect("/login")
-    
-    form = AddProject()
-    
+    if(request.args.get('id')):
+        row = connect.query(Project).where(Project.projectID==request.args.get('id')).order_by(Project.projectID.desc()).first()
+        form = AddProject(obj=row)
+        title="Edit Project"
+        edit = "yes"
+    else:
+        form = AddProject()
+        title="Add Project"
+        edit = "no"
+        
     if(request.method == "POST"):
         if form.validate_on_submit():
+            
+            # If it is an update
+            if(request.args.get('id') and request.args.get('edit')):
+                if(request.args.get('edit') == "yes" ):
+                    project = connect.query(Project).where(Project.projectID==request.args.get('id')).order_by(Project.projectID.desc()).first()
+                    project.projectName = form.projectName.data
+                    project.projectDescription = form.projectDescription.data
+                    project.projectManager = form.projectManager.data
+                    project.customerID = form.customerID.data
+                    connect.add(project)
+                    connect.commit()
+                    return redirect("/project_detail?id="+request.args.get('id'))                
+            
             # Get new Ticket ID
             targetRow = connect.query(Project).order_by(Project.projectID.desc()).first()
-            newID = targetRow.projectID + 1
+            if(targetRow):
+                newID = targetRow.projectID + 1
+            else:
+                newID = 1
             
             # New Project Object
             # (projectID, projectName, projectNumber, projectDescription, projectManager, customerID, projectClient, projectStatus)
@@ -371,8 +403,23 @@ def add_project():
                 for err in errorMessages:
                     flash(err, 'danger')
 
-    return render_template('add_project.html', title="Add Project", form=form)
+    return render_template('add_project.html', title=title, form=form, type="add_project", id=request.args.get('id'), edit = edit)
 
+#
+# Add Project
+#
+@app.route("/delete_project", methods=['GET', 'POST'])
+def delete_project():
+    # Check if logged in
+    if not loggedIn():
+        return redirect("/login")
+    
+    if(request.args.get('id') and request.args.get('delete')):
+        project = connect.query(Project).where(Project.projectID==request.args.get('id')).order_by(Project.projectID.desc()).first()
+        connect.delete(project)
+        connect.commit()
+    return redirect("/projects")
+    
 ##########################################################
 #  CUSTOMERS         
 ##########################################################
