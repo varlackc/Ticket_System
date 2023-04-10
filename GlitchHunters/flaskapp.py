@@ -63,7 +63,7 @@ db.init_app(app)
 #
 # Create Engine
 #
-engine = create_engine("sqlite:///GlitchHunters/appdb.db", connect_args={"check_same_thread": False}, echo=True, future=True) 
+engine = create_engine("sqlite:///appdb.db", connect_args={"check_same_thread": False}, echo=True, future=True) 
 
 #
 # Create Meta Data

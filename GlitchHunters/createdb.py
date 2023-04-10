@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 import os
 
 # verify if the database already exists
-database_filename = "GlitchHunters/appdb.db"
+database_filename = "appdb.db"
 
 if os.path.exists(database_filename):
     print(f"The database file {database_filename} already exists")
