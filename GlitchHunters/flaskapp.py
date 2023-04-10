@@ -93,6 +93,7 @@ session = Session()
 # session.add(login1)
 # session.commit()
 
+# login controller
 def loggedIn():
     if not session.get("login"):
         return 0
@@ -100,6 +101,7 @@ def loggedIn():
         return 0
     return 1
 
+# ticket controller
 # App.route decorator sets the root of the website "Tickets"
 @app.route("/tickets")
 def tickets():
@@ -111,6 +113,7 @@ def tickets():
     # return the template home.html inside the template folder
     return render_template('tickets.html', title='Tickets')
 
+# ticket detail controler
 # App.route decorator sets the root of the website "Ticket Details"
 @app.route("/ticket_detail")
 def ticket_detail():
@@ -122,7 +125,7 @@ def ticket_detail():
     # return the template home.html inside the template folder
     return render_template('ticket_detail.html')
 
-
+# project controller
 # App.route decorator sets the root of the website "Tickets"
 @app.route("/projects")
 def projects():
@@ -134,12 +137,14 @@ def projects():
     # return the template home.html inside the template folder
     return render_template('projects.html', title='Projects')
 
+# project detail controller
 # App.route decorator sets the root of the website "Ticket Details"
 @app.route("/project_detail")
 def project_detail():
     # return the template home.html inside the template folder
     return render_template('project_detail.html')
 
+# register controller
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
@@ -166,6 +171,7 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
+# login controller
 @app.route("/login", methods=['GET', 'POST'])
 @app.route("/", methods=['GET', 'POST'])
 def login():
@@ -199,6 +205,7 @@ def login():
                 
     return render_template('login.html', title='Login', form=form)
 
+# logout controller
 @app.route("/logout")
 def logout():
     session["login"] = 0
