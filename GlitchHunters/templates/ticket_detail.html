@@ -20,6 +20,20 @@
                         <p>{{t.ticketDescription}}</p>
                 </div>
         </div>
+        <div class="bottom-buttons">
+                <button onclick="editTicket()">Edit</button>
+                <button class="delete" onclick="deleteTicket()">Delete</button>
+        </div>
+        <script>
+                function editTicket(){
+                    window.location.replace("add_ticket?id={{t.ticketID}}");
+                }
+                function deleteTicket(){
+                        window.location.replace("delete_ticket?id={{t.ticketID}}&delete=1");
+                    }
+                
+        </script>
+        
         
 
 {% endblock content %}

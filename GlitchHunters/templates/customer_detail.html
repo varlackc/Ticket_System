@@ -25,6 +25,18 @@
                         <p>{{c.customerNotes}}</p>
                 </div>
         </div>
-        
+        <div class="bottom-buttons">
+                <button onclick="editCustomer()">Edit</button>
+                <button class="delete" onclick="deleteCustomer()">Delete</button>
+        </div>
+        <script>
+                function editCustomer(){
+                    window.location.replace("add_customer?id={{c.customerID}}");
+                }
+                function deleteCustomer(){
+                        window.location.replace("delete_customer?id={{c.customerID}}&delete=1");
+                    }
+                
+        </script>
 
 {% endblock content %}

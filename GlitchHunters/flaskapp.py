@@ -258,16 +258,41 @@ def add_ticket():
     # Check if logged in
     if not loggedIn():
         return redirect("/login")
-    
-    form = AddTicket()
-    
-    #projects = connect.query(Project).order_by(Project.projectID.desc()).first()
-    
+        
+    if(request.args.get('id')):
+        row = connect.query(Ticket).where(Ticket.ticketID==request.args.get('id')).order_by(Ticket.ticketID.desc()).first()
+        form = AddTicket(obj=row)
+        title="Edit Project"
+        edit = "yes"
+    else:
+        form = AddTicket()
+        title="Add Project"
+        edit = "no"
+        
     if(request.method == "POST"):
         if form.validate_on_submit():
+            
+            # If it is an update
+            if(request.args.get('id') and request.args.get('edit')):
+                if(request.args.get('edit') == "yes" ):
+                    ticket = connect.query(Ticket).where(Ticket.ticketID==request.args.get('id')).order_by(Ticket.ticketID.desc()).first()
+                    ticket.ticketName = form.ticketName.data
+                    ticket.ticketDescription = form.ticketDescription.data
+                    ticket.projectID = form.projectID.data
+                    ticket.employeeID = form.employeeID.data
+                    ticket.priority = form.priority.data
+                    ticket.status = form.priority.data
+                    connect.add(ticket)
+                    connect.commit()
+                    return redirect("/ticket_detail?id="+request.args.get('id'))                
+            
+            
             # Get new Ticket ID
             targetRow = connect.query(Ticket).order_by(Ticket.ticketID.desc()).first()
-            newID = targetRow.ticketID + 1
+            if(targetRow):
+                newID = targetRow.ticketID + 1
+            else:
+                newID = 1
             
             # New Ticket Object
             #self, ticketID, ticketName, ticketDescription, projectID, employeeID, priority, status
@@ -284,7 +309,22 @@ def add_ticket():
                 for err in errorMessages:
                     flash(err, 'danger')
 
-    return render_template('add_ticket.html', title="Add Ticket", form=form)
+    return render_template('add_ticket.html', title="Add Ticket", form=form, type="add_ticket", id=request.args.get('id'), edit = edit)
+
+#
+# Delete Ticket
+#
+@app.route("/delete_ticket", methods=['GET', 'POST'])
+def delete_ticket():
+    # Check if logged in
+    if not loggedIn():
+        return redirect("/login")
+    
+    if(request.args.get('id') and request.args.get('delete')):
+        ticket = connect.query(Ticket).where(Ticket.ticketID==request.args.get('id')).order_by(Ticket.ticketID.desc()).first()
+        connect.delete(ticket)
+        connect.commit()
+    return redirect("/tickets")
 
 ##########################################################
 #  PROJECTS         
@@ -406,7 +446,7 @@ def add_project():
     return render_template('add_project.html', title=title, form=form, type="add_project", id=request.args.get('id'), edit = edit)
 
 #
-# Add Project
+# Delete Project
 #
 @app.route("/delete_project", methods=['GET', 'POST'])
 def delete_project():
@@ -468,11 +508,40 @@ def add_customer():
     
     form = AddCustomer()
     
+    if(request.args.get('id')):
+        row = connect.query(Customer).where(Customer.customerID==request.args.get('id')).order_by(Customer.customerID.desc()).first()
+        form = AddCustomer(obj=row)
+        title="Edit Customer"
+        edit = "yes"
+    else:
+        form = AddCustomer()
+        title="Add Customer"
+        edit = "no"
+    
     if(request.method == "POST"):
         if form.validate_on_submit():
+            
+            # If it is an update
+            if(request.args.get('id') and request.args.get('edit')):
+                if(request.args.get('edit') == "yes" ):
+                    customer = connect.query(Customer).where(Customer.customerID==request.args.get('id')).order_by(Customer.customerID.desc()).first()
+                    customer.customerName = form.customerName.data
+                    customer.customerLastName = form.customerLastName.data
+                    customer.customerAddress = form.customerAddress.data
+                    customer.customerEmail = form.customerEmail.data
+                    customer.customerPhoneNumber = form.customerPhoneNumber.data
+                    customer.customerNotes = form.customerNotes.data
+                    connect.add(customer)
+                    connect.commit()
+                    return redirect("/customer_detail?id="+request.args.get('id'))                
+            
+            
             # Get new Ticket ID
             targetRow = connect.query(Customer).order_by(Customer.customerID.desc()).first()
-            newID = targetRow.customerID + 1
+            if(targetRow):
+                newID = targetRow.customerID + 1
+            else:
+                newID = 1
             
             # New Project Object
             # (projectID, projectName, projectNumber, projectDescription, projectManager, customerID, projectClient, projectStatus)
@@ -488,7 +557,22 @@ def add_customer():
                 for err in errorMessages:
                     flash(err, 'danger')
 
-    return render_template('add_customer.html', title="Add Customer", form=form)
+    return render_template('add_customer.html', title=title, form=form, type="add_customer", id=request.args.get('id'), edit = edit)
+
+#
+# Delete Customer
+#
+@app.route("/delete_customer", methods=['GET', 'POST'])
+def delete_customer():
+    # Check if logged in
+    if not loggedIn():
+        return redirect("/login")
+    
+    if(request.args.get('id') and request.args.get('delete')):
+        customer = connect.query(Customer).where(Customer.customerID==request.args.get('id')).order_by(Customer.customerID.desc()).first()
+        connect.delete(customer)
+        connect.commit()
+    return redirect("/customers")
 
 ##########################################################
 #  REGISTRATION         

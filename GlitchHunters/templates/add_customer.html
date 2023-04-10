@@ -2,8 +2,8 @@
 {% block content %}
     <h4>Add New Customer</h4>
         <br>
-    <form id="addCustomer" class="add" name="add" action="" method="post">
-        {{ form.hidden_tag() }}
+        <form id="addCustomer" class="add" name="{{title}}" action="{{ type }}?id={{ id }}&edit={{edit}}" method="post">
+            {{ form.hidden_tag() }}
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     {% for category, message in messages %}
