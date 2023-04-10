@@ -17,7 +17,6 @@ class Login(Base):
     __tablename__ = "login"
     __table_args__ = {"sqlite_autoincrement": True}  # this should add auto increment
         
-#    loginID = Column("loginID", Integer, index=True, unique=True, primary_key=True, autoincrement=True)
     loginID = Column("loginID", Integer, unique=True, primary_key=True)
     userName = Column("userName", String, nullable=False)
     password = Column("password", String, nullable=False)
@@ -25,7 +24,6 @@ class Login(Base):
     lastName = Column("lastName", String)
     loginType = Column("loginType", String)
         
-#    def __init__(self, userName, password, firstName, lastName, loginType):
     def __init__(self, loginID, userName, password, firstName, lastName, loginType):
         self.loginID = loginID
         self.userName = userName
@@ -36,7 +34,32 @@ class Login(Base):
             
     def __repr__(self):
         return f"({self.loginID}) {self.userName} {self.password} {self.firstName} {self.lastName} {self.loginType}"
-#        return f"( {self.userName} {self.password} {self.firstName} {self.lastName} {self.loginType}"
+
+    # Project table model
+    class Project(Base):
+        __tablename__ = "project"
+        
+        projectID = Column("projectID", Integer, primary_key=True)
+        projectName = Column("projectName", String)
+        projectNumber = Column("projectNumber", Integer)
+        projectDescription = Column("projectDescription", String)
+        projectManager = Column("projectManager", String)
+        customerID = Column(Integer, ForeignKey("customer.customerID"))
+        projectClient = Column("projectClient", String)
+        projectStatus = Column("projectStatus", String)
+        
+        def __init__(self, projectID, projectName, projectNumber, projectDescription, projectManager, customerID, projectClient, projectStatus):
+            self.projectID = projectID
+            self.projectName = projectName
+            self.projectNumber = projectNumber
+            self.projectDescription = projectDescription
+            self.projectManager = projectManager
+            self.customerID = customerID
+            self.projectClient = projectClient
+            self.projectStatus = projectStatus
+            
+        def __repr__(self):
+            return f"({self.projectID}) {self.projectName} {self.projectNumber} {self.projectDescription} {self.projectManager} {self.customerID} {self.projectClient} {self.projectStatus}"
 
 # set the ap variables
 app = Flask(__name__)
@@ -105,8 +128,8 @@ def ticket_detail():
 def projects():
     
     # Check if logged in
-    if not loggedIn():
-        return redirect("/login")
+    # if not loggedIn():
+        # return redirect("/login")
         
     # return the template home.html inside the template folder
     return render_template('projects.html', title='Projects')
@@ -148,14 +171,32 @@ def register():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        # NEED TO VALIDATE WITH DATABASE
-        if form.username.data == 'demo' and form.password.data == 'demo':
+        # Gather database data for validation, if no match is available pass an empty example and the page will fail
+        try:
+            targetRow = session.query(Login).filter(Login.userName == form.username.data).filter(Login.password == form.password.data).first()
+            print("-------------------------------")
+            print("Made it to the login")
+            print(targetRow)
+            print(f"Form userName: {form.username.data}")
+            print(f"Form password: {form.password.data}")
+            print(targetRow.userName)
+            print(f"DB password: {targetRow.password}")
+            print("-------------------------------")
+        except:
+            targetRow = Login(0, "", "", "", "", "",)
+
+        if form.username.data == targetRow.userName and form.password.data == targetRow.password:
             flash('You have been logged in!', 'success')
-            session["login"] = 1
+            # session["login"] = 1
             
             return redirect(url_for('projects'))
         else:
             flash('Login Unsuccessful. Please check username and password', 'danger')
+            
+            # reset the form in case of error 
+            #form = form(formdata=None)  
+            return redirect(url_for('login'))
+                
     return render_template('login.html', title='Login', form=form)
 
 @app.route("/logout")
