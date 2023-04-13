@@ -5,8 +5,15 @@
 # FLASK
 from flask import Flask, render_template, url_for, flash, redirect, session, request
 
+#Form Stuff
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, TextAreaField, HiddenField
+from wtforms.validators import DataRequired, Length, Email, EqualTo
+from wtforms.ext.sqlalchemy.fields import QuerySelectField
+
 # Form Helper :)
-#from forms import RegistrationForm, LoginForm, AddProject, AddTicket, AddCustomer
+from forms import RegistrationForm, LoginForm, AddTicket, AddCustomer, AddProject
+
 
 # Flask Session
 from flask_session import Session
@@ -25,11 +32,6 @@ from flask_sqlalchemy import SQLAlchemy
 
 import json
 
-#Form Stuff
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, TextAreaField, HiddenField
-from wtforms.validators import DataRequired, Length, Email, EqualTo
-from wtforms.ext.sqlalchemy.fields import QuerySelectField
 
 ##########################################################
 #  CONFIGURATION         
@@ -86,107 +88,6 @@ def loggedIn():
         return 0
     return 1
 
-##################################################################################################################
-# FORMS
-##################################################################################################################
-    
-#
-#  LOGIN FORM     
-#
-class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()], )
-    password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('Login')
-    
-#
-#  REGISTRATION FORM         
-#
-class RegistrationForm(FlaskForm):
-    username = StringField('Username',
-                           validators=[DataRequired(), Length(min=2, max=20)])
-    firstname = StringField('FirstName',
-                        validators=[DataRequired(), Length(min=2, max=20)])
-    lastname = StringField('LastName',
-                        validators=[DataRequired(), Length(min=2, max=20)])
-    password = PasswordField('Password', validators=[DataRequired()])
-    confirm_password = PasswordField('Confirm Password',
-                                     validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Sign Up')
-   
-#
-#  TICKET FORM         
-# 
-class AddTicket(FlaskForm):
-    ticketName = StringField('Title', validators=[DataRequired()], )
-    ticketDescription = TextAreaField('Description', validators=[DataRequired()])
-    
-    rows = connect.query(Project).order_by(Project.projectID.asc())
-    projectIDs = [0]
-    projectNames = [""]
-    if(rows):
-        for r in rows:
-            projectIDs.append(r.projectID)
-            projectNames.append(r.projectName)
-    projects = list(zip(projectIDs, projectNames))
-    
-    rows = connect.query(Employee).order_by(Employee.employeeID.asc())
-    employeeIDs = [0]
-    employeeNames = [""]
-    if(rows):
-        for r in rows:
-            employeeIDs.append(r.employeeID)
-            employeeNames.append(r.employeeName + " " + r.employeeLastName)
-    employees = list(zip(employeeIDs, employeeNames))
-    
-    projectID = SelectField('Project', choices=projects, coerce=int)
-    employeeID = SelectField('Employee', choices=employees, coerce=int)
-    
-    priority = SelectField('Priority', choices=[('Low', 'Low'), ('Medium', 'Medium'), ('High', 'High')], validators=[DataRequired()])
-    status = SelectField('Status', choices=[('Open', 'Open'), ('In Progress', 'In Progress'), ('Closed', 'Closed')], validators=[DataRequired()])
-    submit = SubmitField('Submit')
-
-#
-#  PROJECT FORM         
-#
-class AddProject(FlaskForm):
-    projectName = StringField('Title', validators=[DataRequired()], )
-    projectDescription = TextAreaField('Description', validators=[DataRequired()])
-    
-    rows = connect.query(Customer).order_by(Customer.customerID.asc())
-    customerIDs = [0]
-    customerNames = [""]
-    if(rows):
-        for r in rows:
-            customerIDs.append(r.customerID)
-            customerNames.append(r.customerName)
-    customers = list(zip(customerIDs, customerNames))
-    
-    rows = connect.query(Employee).order_by(Employee.employeeID.asc())
-    employeeIDs = [0]
-    employeeNames = [""]
-    if(rows):
-        for r in rows:
-            employeeIDs.append(r.employeeID)
-            employeeNames.append(r.employeeName + " " + r.employeeLastName)
-    employees = list(zip(employeeIDs, employeeNames))
-    
-    customerID = SelectField(u'Customer', choices=customers, coerce=int)
-    projectManager = SelectField(u'Employee', choices=employees, coerce=int)
-        
-    submit = SubmitField('Submit')
-    
-#
-#  CUSTOMERS FORM         
-#
-class AddCustomer(FlaskForm):
-    customerName = StringField('FIrst Name', validators=[DataRequired()], )
-    customerLastName = StringField('Last Name', validators=[DataRequired()])
-    customerPhoneNumber = StringField('Phone Number', validators=[DataRequired()])
-    customerAddress = StringField('Street Address', validators=[DataRequired()])
-    customerEmail = StringField('Email', validators=[DataRequired()])   
-    customerNotes = TextAreaField('Notes', validators=[DataRequired()])    
-    submit = SubmitField('Submit') 
-    
 ##########################################################
 #  TICKETS         
 ##########################################################
@@ -241,8 +142,8 @@ def ticket_detail():
     else:
         projectName = ""
     employee = connect.query(Employee).where(Employee.employeeID==ticket.employeeID).order_by(Employee.employeeID.asc()).first()
-    if(project):
-        employeeName = employee.employeeName
+    if(employee):
+        employeeName = employee.employeeName + " " + employee.employeeLastName
     else:
         employeeName = ""
 
@@ -258,7 +159,7 @@ def add_ticket():
     # Check if logged in
     if not loggedIn():
         return redirect("/login")
-        
+    form = AddTicket()
     if(request.args.get('id')):
         row = connect.query(Ticket).where(Ticket.ticketID==request.args.get('id')).order_by(Ticket.ticketID.desc()).first()
         form = AddTicket(obj=row)
@@ -268,6 +169,30 @@ def add_ticket():
         form = AddTicket()
         title="Add Project"
         edit = "no"
+        
+    rows = connect.query(Project).order_by(Project.projectID.asc())
+    projectIDs = [0]
+    projectNames = [""]
+    if(rows):
+        for r in rows:
+            print(r.projectID)
+            projectIDs.append(r.projectID)
+            projectNames.append(r.projectName)
+    projects = list(zip(projectIDs, projectNames))
+    
+    rows = connect.query(Employee).order_by(Employee.employeeID.asc())
+    employeeIDs = [0]
+    employeeNames = [""]
+    
+    if(rows):
+        for r in rows:
+            print(r.employeeID)
+            employeeIDs.append(r.employeeID)
+            employeeNames.append(r.employeeName + " " + r.employeeLastName)
+    employees = list(zip(employeeIDs, employeeNames))
+    
+    form.projectID.choices = projects
+    form.employeeID.choices = employees    
         
     if(request.method == "POST"):
         if form.validate_on_submit():
@@ -407,6 +332,27 @@ def add_project():
         title="Add Project"
         edit = "no"
         
+    rows = connect.query(Customer).order_by(Customer.customerID.asc())
+    customerIDs = [0]
+    customerNames = [""]
+    if(rows):
+        for r in rows:
+            customerIDs.append(r.customerID)
+            customerNames.append(r.customerName)
+    customers = list(zip(customerIDs, customerNames))
+    
+    rows = connect.query(Employee).order_by(Employee.employeeID.asc())
+    employeeIDs = [0]
+    employeeNames = [""]
+    if(rows):
+        for r in rows:
+            employeeIDs.append(r.employeeID)
+            employeeNames.append(r.employeeName + " " + r.employeeLastName)
+    employees = list(zip(employeeIDs, employeeNames))
+    
+    form.customerID.choices = customers
+    form.projectManager.choices = employees
+        
     if(request.method == "POST"):
         if form.validate_on_submit():
             
@@ -443,7 +389,8 @@ def add_project():
                 for err in errorMessages:
                     flash(err, 'danger')
 
-    return render_template('add_project.html', title=title, form=form, type="add_project", id=request.args.get('id'), edit = edit)
+    #return render_template('add_project.html', title=title, form=form, type="add_project", id=request.args.get('id'), edit = edit)
+    return render_template('add_project.html', title=title, form=form, type="add_project", edit = edit)
 
 #
 # Delete Project
@@ -593,13 +540,21 @@ def register():
         
         # Get new Login ID Object
         targetRow = connect.query(Login).order_by(Login.loginID.desc()).first()
-        newID = targetRow.loginID + 1
+        LID = targetRow.loginID + 1
         
         # New Login Object
-        newLogin = Login(int(newID), form.username.data, form.password.data, form.firstname.data, form.lastname.data, "Demo")
+        newLogin = Login(int(LID), form.username.data, form.password.data, form.firstname.data, form.lastname.data, "Demo")
+        
+        # Get new Login ID Object
+        targetRow = connect.query(Employee).order_by(Employee.employeeID.desc()).first()
+        EID = targetRow.loginID + 1
+        
+        # New Login Object
+        newEmployee = Employee(int(EID), form.firstname.data, form.lastname.data, "Demo", "Demo", "Demo", "Demo", LID)
         
         # Insert User Into Database
         connect.add(newLogin)
+        connect.add(newEmployee)
         connect.commit()
 
         flash('Your Account has been created! you are now able to log in', 'success')
