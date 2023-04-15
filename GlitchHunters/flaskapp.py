@@ -19,7 +19,7 @@ from forms import RegistrationForm, LoginForm, AddTicket, AddCustomer, AddProjec
 from flask_session import Session
 
 #SQLAlchemy
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, desc, func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
@@ -150,82 +150,56 @@ def ticket_detail():
     # Load the ticket_detail.html Template
     return render_template('ticket_detail.html', t=ticket, projectName=projectName, employeeName=employeeName )
 
-#
-# Add Ticket
-#
 @app.route("/add_ticket", methods=['GET', 'POST'])
 def add_ticket():
-    
-    # Check if logged in
     if not loggedIn():
         return redirect("/login")
+    
+    ticket_id = request.args.get('id')
+    
+    
     form = AddTicket()
-    if(request.args.get('id')):
-        row = connect.query(Ticket).where(Ticket.ticketID==request.args.get('id')).order_by(Ticket.ticketID.desc()).first()
+    edit = "no"
+    
+    if ticket_id:
+        row = connect.query(Ticket).where(Ticket.ticketID==ticket_id).order_by(Ticket.ticketID.desc()).first()
         form = AddTicket(obj=row)
-        title="Edit Project"
+        title = "Edit Project"
         edit = "yes"
     else:
-        form = AddTicket()
-        title="Add Project"
-        edit = "no"
-        
-    rows = connect.query(Project).order_by(Project.projectID.asc())
-    projectIDs = [0]
-    projectNames = [""]
-    if(rows):
-        for r in rows:
-            print(r.projectID)
-            projectIDs.append(r.projectID)
-            projectNames.append(r.projectName)
-    projects = list(zip(projectIDs, projectNames))
+        title = "Add Project"
     
-    rows = connect.query(Employee).order_by(Employee.employeeID.asc())
-    employeeIDs = [0]
-    employeeNames = [""]
     
-    if(rows):
-        for r in rows:
-            print(r.employeeID)
-            employeeIDs.append(r.employeeID)
-            employeeNames.append(r.employeeName + " " + r.employeeLastName)
-    employees = list(zip(employeeIDs, employeeNames))
+    projects = [(r.projectID, r.projectName) for r in connect.query(Project).order_by(Project.projectID.asc())]
+    employees = [(r.employeeID, f"{r.employeeName} {r.employeeLastName}") for r in connect.query(Employee).order_by(Employee.employeeID.asc())]
     
     form.projectID.choices = projects
     form.employeeID.choices = employees    
-        
-    if(request.method == "POST"):
+    
+    if request.method == "POST":
         if form.validate_on_submit():
+            if ticket_id and request.args.get('edit') == "yes":
+                ticket = connect.query(Ticket).where(Ticket.ticketID==ticket_id).order_by(Ticket.ticketID.desc()).first()
+                ticket.ticketName = form.ticketName.data
+                ticket.ticketDescription = form.ticketDescription.data
+                ticket.projectID = form.projectID.data
+                ticket.employeeID = form.employeeID.data
+                ticket.priority = form.priority.data
+                ticket.status = form.priority.data
+                connect.add(ticket)
+                connect.commit()
+                return redirect(f"/ticket_detail?id={ticket_id}")
             
-            # If it is an update
-            if(request.args.get('id') and request.args.get('edit')):
-                if(request.args.get('edit') == "yes" ):
-                    ticket = connect.query(Ticket).where(Ticket.ticketID==request.args.get('id')).order_by(Ticket.ticketID.desc()).first()
-                    ticket.ticketName = form.ticketName.data
-                    ticket.ticketDescription = form.ticketDescription.data
-                    ticket.projectID = form.projectID.data
-                    ticket.employeeID = form.employeeID.data
-                    ticket.priority = form.priority.data
-                    ticket.status = form.priority.data
-                    connect.add(ticket)
-                    connect.commit()
-                    return redirect("/ticket_detail?id="+request.args.get('id'))                
+            new_id = connect.query(func.max(Ticket.ticketID)).scalar() or 0
+            new_ticket = Ticket(new_id + 1, 
+                                form.ticketName.data, 
+                                form.ticketDescription.data, 
+                                form.projectID.data, 
+                                form.employeeID.data, 
+                                form.priority.data, 
+                                form.status.data)
             
-            
-            # Get new Ticket ID
-            targetRow = connect.query(Ticket).order_by(Ticket.ticketID.desc()).first()
-            if(targetRow):
-                newID = targetRow.ticketID + 1
-            else:
-                newID = 1
-            
-            # New Ticket Object
-            #self, ticketID, ticketName, ticketDescription, projectID, employeeID, priority, status
-            print(form.status.data)
-            newTicket = Ticket(int(newID), form.ticketName.data, form.ticketDescription.data, form.projectID.data, form.employeeID.data, form.priority.data, form.status.data)
-            
-            # Insert Ticket Into Database
-            connect.add(newTicket)
+            connect.add(new_ticket)
             connect.commit()
             
             return redirect("/tickets")
@@ -234,7 +208,7 @@ def add_ticket():
                 for err in errorMessages:
                     flash(err, 'danger')
 
-    return render_template('add_ticket.html', title="Add Ticket", form=form, type="add_ticket", id=request.args.get('id'), edit = edit)
+    return render_template('add_ticket.html', title=title, form=form, type="add_ticket", id=ticket_id, edit=edit)
 
 #
 # Delete Ticket
@@ -332,24 +306,30 @@ def add_project():
         title="Add Project"
         edit = "no"
         
+    # Get all of the Customers
     rows = connect.query(Customer).order_by(Customer.customerID.asc())
     customerIDs = [0]
     customerNames = [""]
+    
+    # Loop through the rows, adding the ID and Customer Name as an option in the form
     if(rows):
         for r in rows:
             customerIDs.append(r.customerID)
             customerNames.append(r.customerName)
     customers = list(zip(customerIDs, customerNames))
     
+    # Get all of the Employees
     rows = connect.query(Employee).order_by(Employee.employeeID.asc())
     employeeIDs = [0]
     employeeNames = [""]
+    # Loop through the rows, adding the ID and Employee Name as an option in the form
     if(rows):
         for r in rows:
             employeeIDs.append(r.employeeID)
             employeeNames.append(r.employeeName + " " + r.employeeLastName)
     employees = list(zip(employeeIDs, employeeNames))
     
+    # Create the dropdown selections for Customer and Project Manager
     form.customerID.choices = customers
     form.projectManager.choices = employees
         
@@ -359,6 +339,7 @@ def add_project():
             # If it is an update
             if(request.args.get('id') and request.args.get('edit')):
                 if(request.args.get('edit') == "yes" ):
+                    # Get the project from the ID
                     project = connect.query(Project).where(Project.projectID==request.args.get('id')).order_by(Project.projectID.desc()).first()
                     project.projectName = form.projectName.data
                     project.projectDescription = form.projectDescription.data
@@ -573,18 +554,32 @@ def register():
 @app.route("/", methods=['GET', 'POST'])
 def login():
     
+    #If they are already logged in, redirect them
     if loggedIn():
         return redirect("/projects")
     
+    # Call the Login Form Class
     form = LoginForm()
+    
+    # Check if Login form is valid
     if form.validate_on_submit():
+        
+        # Make sure the request method is POST, not GET
         if(request.method == "POST"):
-            targetRow = connect.query(Login).where(Login.userName==form.username.data,Login.password==form.password.data).order_by(Login.loginID.desc()).first()
+            
+            # Find the entry with matching username and password
+            targetRow = connect.query(Login).where(
+                    Login.userName==form.username.data,
+                    Login.password==form.password.data
+                ).order_by(Login.loginID.desc()).first()
+            
+            # If there is a entry that is found, log them in and redirect
             if(targetRow):
                 if targetRow.loginID > 0:
                     session["login"] = 1
                     return redirect(url_for('projects'))
             else:
+                # If it fails, give them an error message
                 flash('Login Failed. Please check username and password', 'danger')
     return render_template('login.html', title='Login', form=form)
 
