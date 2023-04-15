@@ -1,4 +1,5 @@
-/* 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900');
+/*
 
     html and :root
 
@@ -180,7 +181,7 @@ h4 {
     height: 40px;
 }
  * {
-    font-family: 'Segoe UI';
+    font-family: 'Inter';
 }
  hr{
      width:100%;
@@ -206,6 +207,67 @@ h4 {
     }
 #main-page .menu input {
     align-self: center;
+}
+@media only screen and (max-width:750px){
+    #main-page{
+        flex-wrap: wrap;
+    }
+    #main-page .left-menu {
+        width: 100%;
+        height: auto;
+    }
+    #main-page #logo img {
+        width: 30px;
+        height: auto;
+    }
+    #main-page #logo h1 {
+        font-size: 30px;
+    }
+    #main-page br{
+        display: none;
+    }
+    #main-page .left-menu .menu {
+        align-items: center;
+    }
+    #main-page .content-area {
+        width: 100%;
+        height: 100vh;
+        background: var(--teal);
+    }
+    #main-page .content-area .content-box {
+        width: calc(100% - 20px);
+        margin: 10px;
+        padding:5px;
+        border-radius: 5px;
+    }
+    #main-page .row{
+        font-size: 9px;
+        margin: 0 0;
+        padding: 2px 4px;
+    }
+    #main-page .customers .row{
+        grid-template-columns: 20% 20% 20% 40%;
+    }
+    #main-page .left-menu .menu .menu-item img{
+        width: 20px;
+    }
+    #main-page .left-menu .menu .menu-item{
+        font-size: 20px;
+        margin: 5px 0;
+    }
+    #main-page button{
+        font-size: 10px;
+    }
+    #main-page h4{
+        font-size: 1em;
+    }
+    #main-page .customers, #main-page .projects, #main-page .tickets{
+        margin:0 -4px;
+    }
+    #main-page .col{
+        padding-left:1px;
+        padding-right: 1px;
+    }
 }
 /* Form CSS */
 .add .form-holder{
