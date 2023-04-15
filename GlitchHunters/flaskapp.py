@@ -296,6 +296,9 @@ def add_project():
     # Check if logged in
     if not loggedIn():
         return redirect("/login")
+    
+    form = AddProject()
+    
     if(request.args.get('id')):
         row = connect.query(Project).where(Project.projectID==request.args.get('id')).order_by(Project.projectID.desc()).first()
         form = AddProject(obj=row)
@@ -337,8 +340,14 @@ def add_project():
         if form.validate_on_submit():
             
             # If it is an update
+            print(" ")
+            print("PROJECT")
+            print(request.args.get('id'))
+            print(" ")
             if(request.args.get('id') and request.args.get('edit')):
+                print("EDITING EDITING EDITING PROJECT" + request.args.get('edit'))
                 if(request.args.get('edit') == "yes" ):
+                    print("EDITING EDITING EDITING PROJECT")
                     # Get the project from the ID
                     project = connect.query(Project).where(Project.projectID==request.args.get('id')).order_by(Project.projectID.desc()).first()
                     project.projectName = form.projectName.data
@@ -371,7 +380,7 @@ def add_project():
                     flash(err, 'danger')
 
     #return render_template('add_project.html', title=title, form=form, type="add_project", id=request.args.get('id'), edit = edit)
-    return render_template('add_project.html', title=title, form=form, type="add_project", edit = edit)
+    return render_template('add_project.html', title=title, form=form, type="add_project", edit = edit, id=request.args.get('id'))
 
 #
 # Delete Project
