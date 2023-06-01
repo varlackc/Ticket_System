@@ -147,4 +147,17 @@ else:
     # Sample user login credentials
     login = Login(1, "demo", "demo", "John", "Walker", "Demo")
     session.add(login)
+    
+    # Sample ticket data
+    ticket = Ticket(1, "demoTicket", "Ticket Description: Demo ticket for testing", 1, 1, "low", "demo")
+    session.add(ticket)
+    
+    # Sample project data
+    project = Project(1, "demoProject", "1", "Project Description: Demo project for testing", "demoManager", 1, "demoClient", "demo")
+    session.add(project)
+    
+    customer = Customer(1, "demoCustomerName", "demoCustomerLastName", "1-555-555-5555", "customerAddress: 555 somewere street USA", "demo@email.com", "demoCustomer", "demo", "This customer is a demo used to test the database")
+    session.add(customer)
+
+    # commit changes
     session.commit()

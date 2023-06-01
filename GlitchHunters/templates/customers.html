@@ -1,8 +1,8 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="heading-area">
-    <h4>Projects</h4>
-    <button onclick="createProject()">Create Project</button>
+    <h4>Customers</h4>
+    <button onclick="createCustomer()">Create Customer</button>
 </div>
 <div class="projects">
     <div class="heading-row row">
@@ -10,10 +10,10 @@
             ID
         </div>
         <div class="col title">
-            Title
+            First Name
         </div>
         <div class="col date">
-            Date
+            Last Name
         </div>
         <div class="col edit">
 
@@ -25,10 +25,5 @@
     <!--
     End of DB pull -->
 </div>
-<script>
-    function createProject(){
-        window.location.replace("add_project");
-    }
-</script>
 
 {% endblock content %}

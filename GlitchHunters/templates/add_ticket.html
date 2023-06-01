@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h4>Add New Ticket</h4>
+    <br>
+    <form id="addTicket" class="add" name="add" action="" method="post">
+        {{ form.hidden_tag() }}
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{category}}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <div class="form-holder">
+            <!-- WILL NEED TO GET DIFFERENT TYPES OF FIELDS (Dropdown, paragraph, etc) -->
+            {{ form.ticketName.label(class="label") }}
+            {{ form.ticketName(class="field ticketName") }}
+
+            {{ form.ticketDescription.label(class="label") }}
+            {{ form.ticketDescription(class="field ticketDescription") }}
+
+            {{ form.projectID.label(class="label") }}
+            {{ form.projectID(class="field projectID") }}
+
+            {{ form.employeeID.label(class="label") }}
+            {{ form.employeeID(class="field employeeID") }}
+
+            {{ form.priority.label(class="label") }}
+            {{ form.priority(class="field priority") }}
+
+            {{ form.status.label(class="label") }}
+            {{ form.status(class="field status") }}
+            </div>
+            {{ form.submit(class="") }}
+    
+    </form>
+{% endblock content %}

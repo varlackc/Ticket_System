@@ -1,6 +1,108 @@
 html {
-                
+    height:100vh;
+    overflow: hidden;         
 }
+:root {
+    --teal: #51DFDF;
+    --orange: #FFA800;
+    --lightteal: #F4FCFC;
+    --lightgray: #D9D9D9;
+    --text: #3A3A3A;
+    --white: #fffdff;
+    --halfwhite: #ffffffdd;
+}
+/* Main Layout CSS */
+#main-page{
+    width:100%;
+    height:100vh;
+    background:var(--white);
+    display:flex;
+}
+    #main-page .row {
+        margin: 0;
+        display: grid;
+        margin: 0 -20px;
+        padding: 5px 20px;
+    }
+    #main-page .tickets .row {
+        grid-template-columns: 0.5fr 1fr 1fr 1fr 1fr 1fr 0.25fr;
+    }
+    #main-page .projects .row {
+        grid-template-columns: 0.5fr 1fr 1fr 0.25fr;
+    }
+    #main-page .heading-row {
+        background: var(--lightteal);
+        color: var(--teal);
+        font-size: 14px;
+        font-weight: 500;
+        margin-top:15px;
+    }
+h4 {
+    margin: 0;
+    text-transform:uppercase;
+}
+#main-page .heading-area {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+    #main-page button.middle {
+       align-self:center;
+    }
+#main-page button {
+    margin: 5px;
+    padding: 5px 10px;
+    border-radius: 10px;
+    border-width: 0;
+    outline: 0;
+    font-size: 16px;
+    font-weight: 600;
+    background: var(--orange);
+    color: var(--halfwhite);
+    font-size: 14px;
+    width: fit-content;
+    padding: 4px 40px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+#main-page button:hover {
+    background: #e19400;
+}
+
+#main-page .left-menu {
+    width: 20vw;
+    height: 100vh;
+    background: var(--white);
+    padding: 10px;
+    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+    z-index: 2;
+}
+
+#main-page .content-area {
+    width: 80vw;
+    height: 100vh;
+    background-image: linear-gradient(to bottom, var(--teal) 25%, var(--white) 25%, var(--white) 100%);
+}
+    #main-page .content-area .content-box {
+        width: 80%;
+        margin: 20px auto 0;
+        background: var(--white);
+        min-height: 200px;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    #main-page #logo h1 {
+        font-size: calc(6px + 1.5vw);
+        margin: 0;
+        color: #51DFDF;
+    }
+    #main-page #logo img {
+        width: calc(6px + 1.5vw);
+        height: calc(6px + 1.5vw);
+    }
 #logo {
     display: flex;
     flex-direction: row;
@@ -9,9 +111,36 @@ html {
 * {
     font-family: 'Segoe UI';
 }
-h1 {
-    color:#51dfdf;
-    font-weight:500;
+ hr{
+     width:100%;
+ }
+#main-page .left-menu .menu {
+    display: flex;
+    flex-direction: column;
+    padding:10px;
+}
+#main-page .left-menu .menu .menu-item{
+    margin: 10px 0;
+    color:var(--text);
+    font-size:20px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+#main-page .left-menu .menu .menu-item:hover{
+    color:var(--teal);
+}
+    #main-page .left-menu .menu .menu-item img{
+        margin-right:5px;
+    }
+#main-page .menu input {
+    align-self: center;
+}
+/* Login CSS */
+
+.login h1 {
+    color: var(--teal);
+    font-weight: 500;
 }
 .content {
     margin: auto;
@@ -37,13 +166,13 @@ h1 {
 #login input.field {
     background: #f4f4fc;
     line-height: 30px;
-    color: #333;
+    color: var(--text);
 }
 #login input.field::placeholder {
     color: #b5b5bb;
 }
 #login input[type="submit"] {
-    background: #ffa800;
+    background: var(--orange);
     color: white;
     font-size: 14px;
     width: fit-content;
